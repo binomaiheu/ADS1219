@@ -1,5 +1,6 @@
 #include "ADS1219.h"
 
+
 ADS1219::ADS1219(uint8_t i2c_addr, uint8_t drdy_pin, TwoWire* wire)
     : _i2c_addr(i2c_addr)
     , _drdy_pin(drdy_pin)
@@ -7,9 +8,11 @@ ADS1219::ADS1219(uint8_t i2c_addr, uint8_t drdy_pin, TwoWire* wire)
 {
 }
 
+
 ADS1219::~ADS1219()
 {
 }
+
 
 void ADS1219::begin( void )
 {
@@ -24,6 +27,7 @@ void ADS1219::begin( void )
 
     return;
 }
+
 
 bool ADS1219::detect( void )
 {
@@ -47,11 +51,11 @@ uint8_t ADS1219::start(void)
     return send_cmd(ADS1219_CMD_START_SYNC);
 }
 
+
 uint8_t ADS1219::powerDown(void)
 {
     return send_cmd(ADS1219_CMD_POWERDOWN);
 }
-
 
 
 uint8_t ADS1219::getGain(uint8_t* gain )
@@ -68,6 +72,7 @@ uint8_t ADS1219::getGain(uint8_t* gain )
     
     return ADS1219_OK;
 }
+
 
 uint8_t ADS1219::setGain( uint8_t gain )
 {
@@ -94,6 +99,7 @@ uint8_t ADS1219::getVREF( uint8_t* type )
     return ADS1219_OK;
 }
 
+
 uint8_t ADS1219::setVREF( uint8_t type )
 {
     uint8_t value;
@@ -103,7 +109,6 @@ uint8_t ADS1219::setVREF( uint8_t type )
 
     return _modify_register(value, ADS1219_CONFIG_MASK_VREF);
 }
-
 
 
 uint8_t ADS1219::getDataRate( uint8_t* rate)
@@ -117,6 +122,7 @@ uint8_t ADS1219::getDataRate( uint8_t* rate)
     return ADS1219_OK;
 }
 
+
 uint8_t ADS1219::setDataRate( uint8_t rate )
 {
     if ( rate > 3 ) return ADS1219_INVALID_DATARATE;
@@ -129,6 +135,7 @@ uint8_t ADS1219::setConversionMode( uint8_t mode )
     if ( mode > 1 ) return ADS1219_INVALID_CM;
     return _modify_register(mode << 1, ADS1219_CONFIG_MASK_CM); 
 }
+
 
 uint8_t ADS1219::getConversionMode( uint8_t* mode )
 {
@@ -185,6 +192,7 @@ uint8_t ADS1219::_write(const uint8_t *buffer, size_t len, bool stop, const uint
     return ADS1219_OK;
 }
 
+
 uint8_t ADS1219::_read(uint8_t *buffer, size_t len, bool stop)
 {
     // different api here, for older architectures (e.g. atmelavr, only uint8_t version)
@@ -226,6 +234,7 @@ uint8_t ADS1219::_write_register(uint8_t data)
     // the ADS12129 has 2 8 bits registers, so we treat them separately here, 
     return _write( &data, 1, true, &reg, 1 );
 }
+
 
 uint8_t ADS1219::_modify_register(uint8_t value, uint8_t mask )
 {

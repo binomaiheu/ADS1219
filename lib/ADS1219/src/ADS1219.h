@@ -4,7 +4,7 @@
 #include <Wire.h>
 
 // Default I2C address, A0 and A1 both to DGND
-#define ADS1219_I2C_ADDRESS 0x40
+#define ADS1219_I2C_ADDRESS      0x40
 
 // See table 7, p. 25 in spec
 #define ADS1219_CMD_RESET        0x06  // Reset the device
@@ -49,9 +49,24 @@
 #define ADS1219_INVALID_DATARATE   7     // invalid datarate
 #define ADS1219_INVALID_CM         8     // invalid conversion mode
 
+/**
+ * @brief Class to communicate with and ADS1219 chip via I2C 
+ *
+ * Most routines return their status code as the return value and return values through pointers in the arguments 
+ */
 class ADS1219 {
 public:
+    
+    /**
+     * @brief Constructor
+     * 
+     * @param i2c_addr the I2C address, default for this module is 0x40, (A0 and A1  to DGND), see specs for wiring 
+     * @param drdy_pin GPIO pin to which the DRDY signal is connected, per default it's not used and the conversion 
+     *        readiness is read from the status register
+     * @param wire address of the TwoWire bus object
+     */
     ADS1219(uint8_t i2c_addr = ADS1219_I2C_ADDRESS, uint8_t drdy_pin = 0, TwoWire *wire = &Wire);
+
     virtual ~ADS1219();
 
     /**
@@ -113,22 +128,19 @@ public:
 
 
     /**
-     * @brief Send a single byte command 
+     * @brief return the device gain
      * 
-     * @return error code
-     */
-    uint8_t send_cmd(uint8_t cmd);
-
-
-    /**
-     * @brief return the device gain 
+     * @param gain variable pointer to recieve the returned gain value
      * 
      * @return error code
      */
     uint8_t getGain( uint8_t* gain );
 
+
     /**
      * @brief set the device gain 
+     * 
+     * @param gain gain value, either ADS1219_GAIN_ONE or ADS1219_GAIN_FOUR
      * 
      * @return error code
      */
@@ -140,14 +152,19 @@ public:
      * 
      * Returns the voltage type
      * 
+     * @param type variable pointer to recieve the voltage reference type, either internal (ADS1219_VREF_INTERNAL) or external (ADS1219_VREF_EXTERNAL)
+     * 
      * @return error code
      */
     uint8_t getVREF( uint8_t *type );
+
 
     /**
      * @brief setVREF
      * 
      * Set the voltage type : reference, internal or external
+     * 
+     * @param type the voltage reference setting : internal (ADS1219_VREF_INTERNAL) or external (ADS1219_VREF_EXTERNAL)
      * 
      * @return error code
      */
@@ -157,15 +174,18 @@ public:
     /**
      * @brief getDataRate() 
      * 
-     * Returns the data rate : 
-     * ADS1219_DATARATE_20SPS 0 (default)
-     * ADS1219_DATARATE_90SPS 1
-     * ADS1219_DATARATE_330SPS 2
-     * ADS1219_DATARATE_1000SPS 3
+     * Returns the data rate
+     *  - ADS1219_DATARATE_20SPS 0 (default)
+     *  - ADS1219_DATARATE_90SPS 1
+     *  - ADS1219_DATARATE_330SPS 2
+     *  - ADS1219_DATARATE_1000SPS 3
      *
+     * @param rate variable pointer to hold the returned rate value
+     * 
      * @return error code
      */
     uint8_t getDataRate( uint8_t* rate);
+
 
     /**
      * @brief setDataRate()
@@ -199,6 +219,8 @@ public:
     /**
      * @brief Checks the status register to see if a conversion result is ready
      * 
+     * The bit (bit 7 in the status register) is reset when the conversion data is read. 
+     * 
      * @param err_code returns the error code as the result is returned by the function
      * 
      * @return true if a conversion result is ready 
@@ -206,6 +228,14 @@ public:
     bool conversionReady( uint8_t* err_code );
 
 
+    /**
+     * @brief Send a single byte command, low level routine to build the above more advances
+     * 
+     * @param cmd The command byte
+     * 
+     * @return error code
+     */
+    uint8_t send_cmd(uint8_t cmd);
 
 private:
     // Low level routines
