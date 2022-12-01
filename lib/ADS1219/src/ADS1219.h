@@ -35,6 +35,9 @@
 #define ADS1219_DATARATE_330SPS  2
 #define ADS1219_DATARATE_1000SPS 3
 
+#define ADS1219_CM_SINGLE_SHOT   0     // single shot conversion mode
+#define ADS1219_CM_CONTINUOUS    1     // continuous conversion mode
+
 // Some error codes
 #define ADS1219_OK                 0     // all is well
 #define ADS1219_BUFFER_TOO_LARGE   1     // the buffers passed to the _write is too large for the architecture internal Wire buffer
@@ -44,6 +47,7 @@
 #define ADS1219_INVALID_GAIN       5     // invalid gain
 #define ADS1219_INVALID_VREF       6     // invalid vref
 #define ADS1219_INVALID_DATARATE   7     // invalid datarate
+#define ADS1219_INVALID_CM         8     // invalid conversion mode
 
 class ADS1219 {
 public:
@@ -81,6 +85,8 @@ public:
      * This command resets the device to the default states. No delay time is required after the RESET command is
      * latched before starting to communicate with the device as long as the timing requirements (see the I2C Timing
      * Requirements table) for the (repeated) START and STOP conditions are met.
+     * 
+     * @return error code
      */
     uint8_t reset(void);
 
@@ -88,7 +94,7 @@ public:
     /**
      * @brief Start command
      * 
-     *  
+     *  @return error code
      */
     uint8_t start(void);
 
@@ -100,23 +106,31 @@ public:
      * analog components, but holds all register values. In case the POWERDOWN command is issued when a
      * conversion is ongoing, the conversion completes before the ADS1219 enters power-down mode. As soon as a
      * START/SYNC command is issued, all analog components return to their previous states.
+     * 
+     * @return error code
      */
     uint8_t powerDown(void);
 
 
     /**
      * @brief Send a single byte command 
+     * 
+     * @return error code
      */
     uint8_t send_cmd(uint8_t cmd);
 
 
     /**
      * @brief return the device gain 
+     * 
+     * @return error code
      */
     uint8_t getGain( uint8_t* gain );
 
     /**
      * @brief set the device gain 
+     * 
+     * @return error code
      */
     uint8_t setGain( uint8_t gain = ADS1219_GAIN_ONE );
 
@@ -125,6 +139,8 @@ public:
      * @brief getVREF
      * 
      * Returns the voltage type
+     * 
+     * @return error code
      */
     uint8_t getVREF( uint8_t *type );
 
@@ -132,6 +148,8 @@ public:
      * @brief setVREF
      * 
      * Set the voltage type : reference, internal or external
+     * 
+     * @return error code
      */
     uint8_t setVREF( uint8_t type );
 
@@ -144,6 +162,8 @@ public:
      * ADS1219_DATARATE_90SPS 1
      * ADS1219_DATARATE_330SPS 2
      * ADS1219_DATARATE_1000SPS 3
+     *
+     * @return error code
      */
     uint8_t getDataRate( uint8_t* rate);
 
@@ -151,8 +171,29 @@ public:
      * @brief setDataRate()
      * 
      * Sets the datarate
+     *
+     * @return error code
      */
     uint8_t setDataRate( uint8_t rate );
+
+
+    /**
+     * @brief set the conversion mode, continuous or single shot (default)
+     * 
+     * ADS1219_CM_SINGLE_SHOT 0
+     * ADS1219_CM_CONTINUOUS  1
+     * 
+     * @return error code
+     */
+    uint8_t setConversionMode( uint8_t mode );
+
+    /**
+     * @brief gets the conversion mode
+     * 
+     * @return error code
+     */
+    uint8_t getConversionMode( uint8_t* mode );
+
 
 private:
     // Low level routines

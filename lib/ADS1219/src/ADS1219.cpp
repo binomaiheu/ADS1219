@@ -124,6 +124,25 @@ uint8_t ADS1219::setDataRate( uint8_t rate )
 }
 
 
+uint8_t ADS1219::setConversionMode( uint8_t mode )
+{
+    if ( mode > 1 ) return ADS1219_INVALID_CM;
+    return _modify_register(mode << 1, ADS1219_CONFIG_MASK_CM); 
+}
+
+uint8_t ADS1219::getConversionMode( uint8_t* mode )
+{
+    uint8_t code, r;
+    code = _read_register( ADS1219_CMD_RREG_CONFIG, &r );
+    if ( code != ADS1219_OK ) return code;
+
+    *mode = ( r & ~ADS1219_CONFIG_MASK_CM ) >> 1;
+ 
+    return ADS1219_OK;
+}
+
+
+
 uint8_t ADS1219::send_cmd(uint8_t cmd)
 {
     return _write(&cmd, 1);

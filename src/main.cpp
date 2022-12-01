@@ -90,12 +90,21 @@ void setup() {
   adc.getDataRate(&rate);
   Serial.print( "Rate (90 SPS): "); Serial.println(rate);
 
+
+
+  Serial.println("cmd: setConversionMode()");
+  adc.setConversionMode(ADS1219_CM_CONTINUOUS);
+  uint8_t mode;
+  adc.getConversionMode(&mode);
+  Serial.print("CM (cont) : "); Serial.println(mode);
+
+
   Serial.println("cmd: getGain()");
   retcode = adc.getGain(&gain);
   Serial.print("Return : "); Serial.println(retcode);
-  Serial.print("Gain   : "); Serial.println(gain);
-
-
+  
+  adc.getDataRate(&rate);
+  Serial.print( "Rate (90 SPS): "); Serial.println(rate);
   // send a start
   //Serial.println("cmd: start()");
   //retcode = adc.start();
