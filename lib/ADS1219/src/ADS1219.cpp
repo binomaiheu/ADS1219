@@ -105,6 +105,25 @@ uint8_t ADS1219::setVREF( uint8_t type )
 }
 
 
+
+uint8_t ADS1219::getDataRate( uint8_t* rate)
+{
+    uint8_t code, r;
+    code = _read_register( ADS1219_CMD_RREG_CONFIG, &r );
+    if ( code != ADS1219_OK ) return code;
+
+    *rate = ( r & ~ADS1219_CONFIG_MASK_DR ) >> 2;
+ 
+    return ADS1219_OK;
+}
+
+uint8_t ADS1219::setDataRate( uint8_t rate )
+{
+    if ( rate > 3 ) return ADS1219_INVALID_DATARATE;
+    return _modify_register(rate << 2, ADS1219_CONFIG_MASK_DR); 
+}
+
+
 uint8_t ADS1219::send_cmd(uint8_t cmd)
 {
     return _write(&cmd, 1);
@@ -183,7 +202,7 @@ uint8_t ADS1219::_write_register(uint8_t data)
 uint8_t ADS1219::_modify_register(uint8_t value, uint8_t mask )
 {
     uint8_t code, data;
-    
+
     // read config register
     code = _read_register(ADS1219_CMD_RREG_CONFIG, &data);
     if ( code != ADS1219_OK ) return code;

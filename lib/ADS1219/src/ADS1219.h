@@ -19,7 +19,7 @@
 // relevant bits
 #define ADS1219_CONFIG_MASK_VREF 0xFE  // bit 0
 #define ADS1219_CONFIG_MASK_CM   0xFD  // bit 1, conversion mode mask
-#define ADD1219_CONFIG_MASK_DR   0xF3  // bits 2 & 3, data rate
+#define ADS1219_CONFIG_MASK_DR   0xF3  // bits 2 & 3, data rate
 #define ADS1219_CONFIG_MASK_GAIN 0xEF  // bit 4,
 #define ADS1219_CONFIG_MASK_MUX  0x1F  // bits 5, 6 & 7 : Input multiplexer configuration
 
@@ -30,6 +30,10 @@
 #define ADS1219_VREF_INTERNAL    0     // internal 2.048 V reference
 #define ADS1219_VREF_EXTERNAL    1     // external reference using REFP and REFN inputs
 
+#define ADS1219_DATARATE_20SPS   0     // (default)
+#define ADS1219_DATARATE_90SPS   1
+#define ADS1219_DATARATE_330SPS  2
+#define ADS1219_DATARATE_1000SPS 3
 
 // Some error codes
 #define ADS1219_OK                 0     // all is well
@@ -39,6 +43,7 @@
 #define ADS1219_FAILED_TO_RECEIVE  4     // incorrect number of bytes recieved from ADS
 #define ADS1219_INVALID_GAIN       5     // invalid gain
 #define ADS1219_INVALID_VREF       6     // invalid vref
+#define ADS1219_INVALID_DATARATE   7     // invalid datarate
 
 class ADS1219 {
 public:
@@ -130,6 +135,24 @@ public:
      */
     uint8_t setVREF( uint8_t type );
 
+
+    /**
+     * @brief getDataRate() 
+     * 
+     * Returns the data rate : 
+     * ADS1219_DATARATE_20SPS 0 (default)
+     * ADS1219_DATARATE_90SPS 1
+     * ADS1219_DATARATE_330SPS 2
+     * ADS1219_DATARATE_1000SPS 3
+     */
+    uint8_t getDataRate( uint8_t* rate);
+
+    /**
+     * @brief setDataRate()
+     * 
+     * Sets the datarate
+     */
+    uint8_t setDataRate( uint8_t rate );
 
 private:
     // Low level routines

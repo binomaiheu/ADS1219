@@ -76,6 +76,26 @@ void setup() {
   Serial.print("Gain   : "); Serial.println(gain);
 
 
+  Serial.println("cmd:: setDataRate");
+  uint8_t rate;
+  adc.setDataRate( ADS1219_DATARATE_330SPS );
+  adc.getDataRate(&rate);
+  Serial.print( "Rate (330 SPS) : "); Serial.println(rate);
+
+  adc.setDataRate( ADS1219_DATARATE_1000SPS );
+  adc.getDataRate(&rate);
+  Serial.print( "Rate (1000 SPS): "); Serial.println(rate);
+
+  adc.setDataRate( ADS1219_DATARATE_90SPS );
+  adc.getDataRate(&rate);
+  Serial.print( "Rate (90 SPS): "); Serial.println(rate);
+
+  Serial.println("cmd: getGain()");
+  retcode = adc.getGain(&gain);
+  Serial.print("Return : "); Serial.println(retcode);
+  Serial.print("Gain   : "); Serial.println(gain);
+
+
   // send a start
   //Serial.println("cmd: start()");
   //retcode = adc.start();
