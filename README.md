@@ -1,4 +1,10 @@
-# Own implementation of ADS1219 I2C communication libraray
+# Implementation of ADS1219 I2C communication library
+
+Here i started an own library for the ADS1219 24-bits adc inspired by existing code, partly
+to learn, partly since the existing repo's didn't seem complete. 
+
+Work in progress...
+
 
 ## Inspired by
 
