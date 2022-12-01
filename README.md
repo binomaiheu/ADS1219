@@ -1,7 +1,7 @@
-# Implementation of ADS1219 I2C communication library
+# Implementation I2C communication library for the Texas Instruments ADS1219 ADC
 
-Here i started an own library for the ADS1219 24-bits adc inspired by existing code, partly
-to learn, partly since the existing repo's didn't seem complete. 
+Here I started an own library for the ADS1219 24-bits adc inspired by existing code, partly
+to learn, partly since the existing repo's didn't seem complete. Will refactor to platformio library. 
 
 Work in progress...
 
