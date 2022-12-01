@@ -142,6 +142,15 @@ uint8_t ADS1219::getConversionMode( uint8_t* mode )
 }
 
 
+bool ADS1219::conversionReady( uint8_t* err_code )
+{
+    uint8_t stat;
+    *err_code = _read_register( ADS1219_CMD_RREG_STATUS, &stat );
+    if ( *err_code != ADS1219_OK ) return false;
+
+    return ( ( stat & 0x80 ) == 0x80 );
+}
+
 
 uint8_t ADS1219::send_cmd(uint8_t cmd)
 {

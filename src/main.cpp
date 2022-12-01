@@ -105,10 +105,23 @@ void setup() {
   
   adc.getDataRate(&rate);
   Serial.print( "Rate (90 SPS): "); Serial.println(rate);
+
+
+
   // send a start
-  //Serial.println("cmd: start()");
-  //retcode = adc.start();
-  //Serial.print("Return : "); Serial.println(retcode);
+
+  Serial.print("Conversion done ? "); Serial.println(adc.conversionReady(&retcode));
+
+  Serial.println("cmd: start()");
+  retcode = adc.start();
+  Serial.print("Return : "); Serial.println(retcode);
+  unsigned long tstart = millis();
+  while( ! adc.conversionReady(&retcode)) {
+    delay(2);
+  }
+  unsigned long delta = millis() - tstart;
+  Serial.print("Conversion done in "); Serial.print(delta); Serial.println(" millis.");
+
 }
 
 void loop() {

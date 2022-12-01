@@ -180,8 +180,7 @@ public:
     /**
      * @brief set the conversion mode, continuous or single shot (default)
      * 
-     * ADS1219_CM_SINGLE_SHOT 0
-     * ADS1219_CM_CONTINUOUS  1
+     * @param mode The requested mode : ADS1219_CM_SINGLE_SHOT(=0), or ADS1219_CM_CONTINUOUS(=1)
      * 
      * @return error code
      */
@@ -190,9 +189,22 @@ public:
     /**
      * @brief gets the conversion mode
      * 
+     * @param mode pointer to the variable to return the mode to
+     * 
      * @return error code
      */
     uint8_t getConversionMode( uint8_t* mode );
+
+
+    /**
+     * @brief Checks the status register to see if a conversion result is ready
+     * 
+     * @param err_code returns the error code as the result is returned by the function
+     * 
+     * @return true if a conversion result is ready 
+     */
+    bool conversionReady( uint8_t* err_code );
+
 
 
 private:
