@@ -122,6 +122,15 @@ void setup() {
   unsigned long delta = millis() - tstart;
   Serial.print("Conversion done in "); Serial.print(delta); Serial.println(" millis.");
 
+
+
+  // read shorted
+  int32_t value = adc.readShorted(&retcode);
+  Serial.print("Shorted read: "); Serial.println( value );
+
+  value = adc.readSingleEnded(0, &retcode);
+  Serial.print("Ch0 read: "); Serial.println( value );
+
 }
 
 void loop() {

@@ -5,6 +5,7 @@ ADS1219::ADS1219(uint8_t i2c_addr, uint8_t drdy_pin, TwoWire* wire)
     : _i2c_addr(i2c_addr)
     , _drdy_pin(drdy_pin)
     , _wire(wire)
+    , _timeout_ms(100UL)
 {
 }
 
@@ -159,6 +160,67 @@ bool ADS1219::conversionReady( uint8_t* err_code )
 }
 
 
+
+int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code )
+{
+    uint8_t mux;
+
+    switch(channel)
+    {
+        case 0:
+            mux = ADS1219_MUX_SINGLE_0;
+            break;
+        case 1:
+            mux = ADS1219_MUX_SINGLE_1;
+            break;
+        case 2:
+            mux = ADS1219_MUX_SINGLE_2;
+            break;
+        case 3:
+            mux = ADS1219_MUX_SINGLE_3;
+            break;
+        default:
+            *err_code = ADS1219_INVALID_MUX;
+            return 0x80000000;
+    }
+
+    return _readout(mux, err_code );
+}
+
+ int32_t ADS1219::readShorted(uint8_t* err_code )
+ {
+    return _readout(ADS1219_MUX_SHORTED, err_code );
+ }
+
+
+int32_t ADS1219::_readout( uint8_t mux, uint8_t* err_code )
+{
+    // Set the multiplexer configuration
+    *err_code = _modify_register(mux, ADS1219_CONFIG_MASK_MUX );
+    if ( *err_code ) return 0x80000000;
+    
+    // Start the conversion
+    *err_code = start();
+    if ( *err_code ) return 0x80000000;
+
+    // Add a timeout safety  
+    bool ready = false;
+    unsigned long tstart = millis();
+    while( ! ready && ( (millis() - tstart) < _timeout_ms ) ) {
+        ready = conversionReady(err_code);
+    }
+
+    if ( ! ready ) {
+        *err_code = ADS1219_TIMEOUT;
+        return 0x80000000;
+    }
+
+    return _read_value(err_code);
+}
+
+
+
+
 uint8_t ADS1219::send_cmd(uint8_t cmd)
 {
     return _write(&cmd, 1);
@@ -250,4 +312,23 @@ uint8_t ADS1219::_modify_register(uint8_t value, uint8_t mask )
 
     // write back
     return _write_register(data);
+}
+
+int32_t ADS1219::_read_value( uint8_t* err_code )
+{
+    // send the read command, if an error happenend, return max 32 bit integer, outside 24bit range !
+    *err_code = send_cmd(ADS1219_CMD_RDATA);
+    if ( *err_code ) return 0x80000000;
+
+    // now get 3 bytes back
+    *err_code = _read(_buffer, 3);
+    if ( *err_code ) return 0x80000000;
+
+    // now decode the bytes
+    uint32_t value = (_buffer[0] << 16) + (_buffer[1] << 8 ) + _buffer[2];
+
+    // make sure the highest 8 bits in the 32 bit integer are cleaned
+    // since the data is returned in binary two's complement format, it' safe to return a uint8_t to int8_t 
+    // thereby correctly treating negative values.. right?!
+    return (value << 8 ) >> 8;
 }

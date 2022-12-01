@@ -23,6 +23,15 @@
 #define ADS1219_CONFIG_MASK_GAIN 0xEF  // bit 4,
 #define ADS1219_CONFIG_MASK_MUX  0x1F  // bits 5, 6 & 7 : Input multiplexer configuration
 
+#define ADS1219_MUX_DIFF_0_1     0x00  // read differential between AINp = AIN0 and AINn = AIN1 (default)
+#define ADS1219_MUX_DIFF_2_3     0x20  // read differential between AINp = AIN2 and AINn = AIN3
+#define ADS1219_MUX_DIFF_1_2     0x40  // read differential between AINp = AIN1 and AINn = AIN2
+#define ADS1219_MUX_SINGLE_0     0x60  // read single between AINp = AIN0 and AINn = AGND
+#define ADS1219_MUX_SINGLE_1     0x80  // read single between AINp = AIN1 and AINn = AGND 
+#define ADS1219_MUX_SINGLE_2     0xA0  // read single between AINp = AIN2 and AINn = AGND
+#define ADS1219_MUX_SINGLE_3     0xC0  // read single between AINp = AIN3 and AINn = AGND
+#define ADS1219_MUX_SHORTED      0xE0  // read AINp and AINn both shorted to AVDD/2
+
 
 // Config and status register
 #define ADS1219_GAIN_ONE         1     // gain 1 (default)
@@ -48,11 +57,14 @@
 #define ADS1219_INVALID_VREF       6     // invalid vref
 #define ADS1219_INVALID_DATARATE   7     // invalid datarate
 #define ADS1219_INVALID_CM         8     // invalid conversion mode
+#define ADS1219_TIMEOUT            9     // timeout during conversion
+#define ADS1219_INVALID_MUX       10     // invalid mux config pattern given
 
 /**
  * @brief Class to communicate with and ADS1219 chip via I2C 
  *
- * Most routines return their status code as the return value and return values through pointers in the arguments 
+ * Most routines return their status code as the return value and return values through pointers in the arguments, 
+ * except for the routines which read the conversion results.  
  */
 class ADS1219 {
 public:
@@ -229,6 +241,26 @@ public:
 
 
     /**
+     * @brief Reads a single ended result from channel
+     * 
+     * @param err_code returns an error code, 0 if all was well
+     * 
+     * @return the value
+     */
+    int32_t readSingleEnded(uint8_t channel, uint8_t* err_code );
+
+
+    /**
+     * @brief Read shorted value
+     * 
+     * @param err_code returns an error code, 0 if all was well
+     * 
+     * @return the value
+     */
+    int32_t readShorted(uint8_t* err_code );
+
+
+    /**
      * @brief Send a single byte command, low level routine to build the above more advances
      * 
      * @param cmd The command byte
@@ -246,11 +278,18 @@ private:
     uint8_t _write_register(uint8_t data);
     uint8_t _modify_register(uint8_t value, uint8_t mask );
 
+    int32_t _read_value( uint8_t* err_code );
+    int32_t _readout( uint8_t mux, uint8_t* err_code );
+
 private:
     uint8_t  _i2c_addr;   //! I2C address, default is 0x40 when A0 and A1 both connected to DGND (see spec p22)
     uint8_t  _drdy_pin;   //! data ready pin (default is 0, meaning it's not used)
     TwoWire* _wire;       //! the wire bus
     bool     _begun;      //! flag to indicate if the device has started
+    
+    uint8_t  _buffer[3];  //! buffer to recieve the ADC readout value
+
+    unsigned long _timeout_ms; //! timeout in ms to wait for the ADC conversion result
 
     size_t   _maxBufferSize;
 };

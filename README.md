@@ -5,6 +5,10 @@ to learn, partly since the existing repo's didn't seem complete. Will refactor t
 
 Work in progress...
 
+## Features
+- In the library i found, (https://github.com/OM222O/ADS1219/), the DRDY pin was used to wait for the result of the conversion, here I'm using the status register as well
+- I added a timeout while waiting for the conversion result such that if something goes wrong there in the code, the microcontroller doesn't hang while waiting forever for the conversion result to become available
+
 
 ## Inspired by
 
