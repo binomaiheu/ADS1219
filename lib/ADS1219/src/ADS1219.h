@@ -27,6 +27,9 @@
 // Config and status register
 #define ADS1219_GAIN_ONE         1     // gain 1 (default)
 #define ADS1219_GAIN_FOUR        4     // gain 4
+#define ADS1219_VREF_INTERNAL    0     // internal 2.048 V reference
+#define ADS1219_VREF_EXTERNAL    1     // external reference using REFP and REFN inputs
+
 
 // Some error codes
 #define ADS1219_OK                 0     // all is well
@@ -35,6 +38,7 @@
 #define ADS1219_FAILED_TO_END      3     // error during endTransmission
 #define ADS1219_FAILED_TO_RECEIVE  4     // incorrect number of bytes recieved from ADS
 #define ADS1219_INVALID_GAIN       5     // invalid gain
+#define ADS1219_INVALID_VREF       6     // invalid vref
 
 class ADS1219 {
 public:
@@ -110,6 +114,21 @@ public:
      * @brief set the device gain 
      */
     uint8_t setGain( uint8_t gain = ADS1219_GAIN_ONE );
+
+
+    /**
+     * @brief getVREF
+     * 
+     * Returns the voltage type
+     */
+    uint8_t getVREF( uint8_t *type );
+
+    /**
+     * @brief setVREF
+     * 
+     * Set the voltage type : reference, internal or external
+     */
+    uint8_t setVREF( uint8_t type );
 
 
 private:
