@@ -226,13 +226,9 @@ uint8_t ADS1219::_modify_register(uint8_t value, uint8_t mask )
     code = _read_register(ADS1219_CMD_RREG_CONFIG, &data);
     if ( code != ADS1219_OK ) return code;
 
-    Serial.print("data : "); Serial.println(data);
-
     // modify, also mask the value bits, should be at the right position !
     // mask is 1 everywhere, except for the relevant bits
     data = (data & mask) | (value & ~mask);
-
-    Serial.print("modified data : "); Serial.println(data);
 
     // write back
     return _write_register(data);
