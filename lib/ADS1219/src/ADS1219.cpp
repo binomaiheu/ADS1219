@@ -59,7 +59,7 @@ uint8_t ADS1219::getGain(uint8_t* gain )
     uint8_t code, r;
     code = _read_register( ADS1219_CMD_RREG_CONFIG, &r );
     if ( code != ADS1219_OK ) return code;
-    
+
     // mask the gain bit (place 4)
     if ( r & ~ADS1219_CONFIG_MASK_GAIN )
         *gain = ADS1219_GAIN_FOUR;
@@ -77,6 +77,31 @@ uint8_t ADS1219::setGain( uint8_t gain )
     else return ADS1219_INVALID_GAIN;
 
     return _modify_register(value, ADS1219_CONFIG_MASK_GAIN);
+}
+
+
+uint8_t ADS1219::getVREF( uint8_t* type )
+{    
+    uint8_t code, r;
+    code = _read_register( ADS1219_CMD_RREG_CONFIG, &r );
+    if ( code != ADS1219_OK ) return code;
+
+    if ( r & ~ADS1219_CONFIG_MASK_VREF )
+        *type = ADS1219_VREF_EXTERNAL;
+    else 
+        *type = ADS1219_VREF_INTERNAL;
+
+    return ADS1219_OK;
+}
+
+uint8_t ADS1219::setVREF( uint8_t type )
+{
+    uint8_t value;
+    if ( type == ADS1219_VREF_INTERNAL ) value = 0;
+    else if ( type == ADS1219_VREF_EXTERNAL ) value = 1;
+    else return ADS1219_INVALID_VREF;
+
+    return _modify_register(value, ADS1219_CONFIG_MASK_VREF);
 }
 
 
@@ -157,16 +182,19 @@ uint8_t ADS1219::_write_register(uint8_t data)
 
 uint8_t ADS1219::_modify_register(uint8_t value, uint8_t mask )
 {
-    uint8_t reg = ADS1219_CMD_WREG;
     uint8_t code, data;
     
-    // read
-    code = _read_register(reg, &data);
+    // read config register
+    code = _read_register(ADS1219_CMD_RREG_CONFIG, &data);
     if ( code != ADS1219_OK ) return code;
+
+    Serial.print("data : "); Serial.println(data);
 
     // modify, also mask the value bits, should be at the right position !
     // mask is 1 everywhere, except for the relevant bits
     data = (data & mask) | (value & ~mask);
+
+    Serial.print("modified data : "); Serial.println(data);
 
     // write back
     return _write_register(data);
