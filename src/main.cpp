@@ -46,6 +46,36 @@ void setup() {
   Serial.print("Return : "); Serial.println(retcode);
   Serial.print("Gain   : "); Serial.println(gain);
 
+  Serial.println("cmd: getGain()");
+  retcode = adc.getGain(&gain);
+  Serial.print("Return : "); Serial.println(retcode);
+  Serial.print("Gain   : "); Serial.println(gain);
+
+
+  // read vref
+  Serial.println("cmd: getVREF()");
+  uint8_t type;
+  retcode = adc.getVREF(&type);
+  Serial.print("Return : "); Serial.println(retcode);
+  Serial.print("VREF   : "); 
+  type == ADS1219_VREF_INTERNAL ? Serial.println("internal") : Serial.println("external");
+
+  Serial.println("cmd: setVREF(EXTERNAL)");
+  retcode = adc.setVREF(ADS1219_VREF_EXTERNAL);
+  Serial.print("Return : "); Serial.println(retcode);
+  
+  Serial.println("cmd: getVREF()");
+  retcode = adc.getVREF(&type);
+  Serial.print("Return : "); Serial.println(retcode);
+  Serial.print("VREF   : "); 
+  type == ADS1219_VREF_INTERNAL ? Serial.println("internal") : Serial.println("external");
+
+  Serial.println("cmd: getGain()");
+  retcode = adc.getGain(&gain);
+  Serial.print("Return : "); Serial.println(retcode);
+  Serial.print("Gain   : "); Serial.println(gain);
+
+
   // send a start
   //Serial.println("cmd: start()");
   //retcode = adc.start();
