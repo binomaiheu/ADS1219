@@ -18,7 +18,12 @@ At the moment my main interest if for the SAMD21 (`atmelsam`) and atmel 1284-P (
 
 ## Unit tests
 
-The library includes a number of unit tests to test the functionality of a connected ADS1219 device. These tests are included in the `test` folder. You can run them via `pio test` or pushing the test button. 
+The library includes a number of unit tests to test the functionality of a connected ADS1219 device. These tests are included in the `test` folder. You can run them via `pio test` or pushing the test button. Several
+test folder exist : 
+
+- `test_ads1219_config` : performs various read/write tests on the configuration registry in the chip
+- `test_ads1219_readout`: performs various tests with the readout, single shot and continuous mode
+- `test_ads1219_powerdown`: tests the powerdown behaviour 
 
 
 ## Inspired by
