@@ -1,16 +1,14 @@
 # Texas Instruments ADS1219 ADC I2C Library
 
 Here I started an own library for the ADS1219 24-bits adc inspired by existing code, partly
-to learn, partly since the existing repo's didn't seem complete. Will refactor to platformio library. 
+to learn, partly since the existing repo's didn't seem complete. 
 
-Work in progress...
-
-https://github.com/binomaiheu/ADS1219
-
+Work in progres...
 
 ## Features
-- In the library i found, (https://github.com/OM222O/ADS1219/), the DRDY pin was used to wait for the result of the conversion, here I'm using the status register as well
-- I added a timeout while waiting for the conversion result such that if something goes wrong there in the code, the microcontroller doesn't hang while waiting forever for the conversion result to become available
+- In the library i found, (https://github.com/OM222O/ADS1219/), the DRDY pin was used to wait for the result of the conversion, here I'm using the chip's status register. 
+- I added a timeout while waiting for the conversion result such that if something goes wrong there in the code, the microcontroller doesn't hang while waiting forever for the conversion result to become available. However for noise reasons, we first wait during the converstion time (1000 / data rate SPS), then an additional small amaount, 5 ms for 
+lowest rate, 1 additional ms for the others and then check the DRDY register. Normally after the first iteration, the while loop should exit, but the timeout allows to try a few times more (albeit with increased noise) untill the timeout expires. 
 
 ## Architectures
 
