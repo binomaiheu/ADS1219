@@ -1,6 +1,6 @@
 {
     "name": "ADS1219",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "Texas Instruments ADS1219 I2C library",
     "keywords": "ADS1219, ADC",
     "headers": [ "ADS1219.h" ],
@@ -22,9 +22,9 @@
     "homepage": "",
     "dependencies": {
     },
-    "frameworks": [
+    "platforms": [
       "atmelavr",
       "atmelsam"
     ],
-    "platforms": "arduino"
+    "frameworks": "arduino"
   }
