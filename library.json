@@ -1,0 +1,26 @@
+{
+    "name": "ADS1219",
+    "version": "0.1.0",
+    "description": "Texas Instruments ADS1219 I2C library",
+    "keywords": "ADS1219, ADC",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/binomaiheu/ADS1219.git"
+    },
+    "authors":
+    [
+      {
+        "name": "Bino Maiheu",
+        "email": "binomaiheu@gmail.com",
+        "url": "",
+        "maintainer": true
+      }
+    ],
+    "license": "MIT",
+    "homepage": "",
+    "dependencies": {
+    },
+    "frameworks": "atmelavr,atmelsam",
+    "platforms": "Arduino"
+  }
