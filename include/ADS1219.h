@@ -229,6 +229,22 @@ public:
 
 
     /**
+     * @brief returns the conversion time in ms, depending on the configured datarate
+     * 
+     * This routine checks the register for the current datarate & calculates the 
+     * conversion time in ms. The conversion time is given by table 4 in the specs and 
+     * is roughly independent of the conversion mode. It's value is given by 1000 devided 
+     * by the datarate : 20, 90, 330 or 1000, so being 50 ms, 11 ms, 3 ms or 1 ms. 
+     * 
+     * If an error is encountered during the reading of the register, the largest conversion
+     * rate of 50 ms is returned. 
+     * 
+     * @return conversion time in ms 
+     */
+    uint16_t getConversionTime( void );
+
+
+    /**
      * @brief Checks the status register to see if a conversion result is ready
      * 
      * The bit (bit 7 in the status register) is reset when the conversion data is read. 

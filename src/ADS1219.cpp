@@ -150,6 +150,27 @@ uint8_t ADS1219::getConversionMode( uint8_t* mode )
 }
 
 
+uint16_t ADS1219::getConversionTime( void )
+{
+    // we will round the conversion times to the next integer ms. 
+    // see specs table 4. 
+    uint8_t rate;
+    if ( getDataRate(&rate) ) return 51; // return largest value if error is encountered 
+    switch( rate ) 
+    {
+        case ADS1219_DATARATE_20SPS:
+            return 51;
+        case ADS1219_DATARATE_90SPS:
+            return 12;
+        case ADS1219_DATARATE_330SPS:
+            return 4;
+        case ADS1219_DATARATE_1000SPS:
+            return 2;
+        default:
+            return 51;
+    }
+}
+
 bool ADS1219::conversionReady( uint8_t* err_code )
 {
     uint8_t stat;
