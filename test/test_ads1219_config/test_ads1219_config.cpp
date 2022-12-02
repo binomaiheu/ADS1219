@@ -65,6 +65,46 @@ void test_ads1219_set_vref(void)
     TEST_ASSERT_EQUAL(ADS1219_VREF_INTERNAL, type);
 }
 
+void test_ads1219_read_datarate(void)
+{
+    uint8_t rate;
+    TEST_ASSERT_EQUAL(0, adc.getDataRate(&rate));
+}
+
+void test_ads1219_set_datarate(void)
+{
+    uint8_t rate;
+    uint8_t set_rates[4] = { 
+        ADS1219_DATARATE_20SPS, 
+        ADS1219_DATARATE_90SPS, 
+        ADS1219_DATARATE_330SPS, 
+        ADS1219_DATARATE_1000SPS };
+    
+    for (uint8_t i=0; i< 4; i++ )
+    {
+        TEST_ASSERT_EQUAL(0, adc.setDataRate(set_rates[i]));
+        TEST_ASSERT_EQUAL(0, adc.getDataRate(&rate));
+        TEST_ASSERT_EQUAL(set_rates[i], rate);
+    }
+}
+
+void test_ads1219_read_conversion_mode(void)
+{
+    uint8_t mode;
+    TEST_ASSERT_EQUAL(0, adc.getConversionMode(&mode));
+}
+
+void test_ads1219_set_conversion_mode(void)
+{
+    uint8_t mode;
+    TEST_ASSERT_EQUAL(0, adc.setConversionMode(ADS1219_CM_CONTINUOUS));
+    TEST_ASSERT_EQUAL(0, adc.getConversionMode(&mode));
+    TEST_ASSERT_EQUAL(ADS1219_CM_CONTINUOUS, mode);
+
+    TEST_ASSERT_EQUAL(0, adc.setConversionMode(ADS1219_CM_SINGLE_SHOT));
+    TEST_ASSERT_EQUAL(0, adc.getConversionMode(&mode));
+    TEST_ASSERT_EQUAL(ADS1219_CM_SINGLE_SHOT, mode);
+}
 
 
 void setup()
@@ -79,7 +119,10 @@ void setup()
     RUN_TEST(test_ads1219_set_gain);
     RUN_TEST(test_ads1219_read_vref);
     RUN_TEST(test_ads1219_set_vref);
-
+    RUN_TEST(test_ads1219_read_datarate);
+    RUN_TEST(test_ads1219_set_datarate);
+    RUN_TEST(test_ads1219_read_conversion_mode);
+    RUN_TEST(test_ads1219_set_conversion_mode);
 
     // Don't forget to make tests for the whole configuration structure and peform different operations in succession
     // to see whether orring of bits is ok
