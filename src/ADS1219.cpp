@@ -152,22 +152,22 @@ uint8_t ADS1219::getConversionMode( uint8_t* mode )
 
 uint16_t ADS1219::getConversionTime( void )
 {
-    // we will round the conversion times to the next integer ms. 
+    // we will round the conversion times to the next integer ms in the readout code below !
     // see specs table 4. 
     uint8_t rate;
-    if ( getDataRate(&rate) ) return 51; // return largest value if error is encountered 
+    if ( getDataRate(&rate) ) return 50; // return largest value if error is encountered 
     switch( rate ) 
     {
         case ADS1219_DATARATE_20SPS:
-            return 51;
+            return 50;
         case ADS1219_DATARATE_90SPS:
-            return 12;
+            return 1;
         case ADS1219_DATARATE_330SPS:
-            return 4;
+            return 3;
         case ADS1219_DATARATE_1000SPS:
-            return 2;
+            return 1;
         default:
-            return 51;
+            return 50;
     }
 }
 
@@ -216,6 +216,8 @@ int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code )
 
 int32_t ADS1219::_readout( uint8_t mux, uint8_t* err_code )
 {
+    bool ready = false;
+
     // Set the multiplexer configuration
     *err_code = _modify_register(mux, ADS1219_CONFIG_MASK_MUX );
     if ( *err_code ) return 0x80000000;
@@ -224,10 +226,18 @@ int32_t ADS1219::_readout( uint8_t mux, uint8_t* err_code )
     *err_code = start();
     if ( *err_code ) return 0x80000000;
 
+    // get the conversion time
+    uint16_t ct = getConversionTime();
+
+    // Wait during the conversion time, add 10 % margin in the loop below and increment in steps 
+    // of 10 % untill timeout, normally after first 10 % extra time, the conversion should
+    // be ready
+    delay(ct);
+
     // Add a timeout safety  
-    bool ready = false;
     unsigned long tstart = millis();
     while( ! ready && ( (millis() - tstart) < _timeout_ms ) ) {
+        delay( ct > 20 ? 5 : 1 ); // extra delay of 5 ms for 50 ms conversion time, for the rest delay additional 1 ms
         ready = conversionReady(err_code);
     }
 
