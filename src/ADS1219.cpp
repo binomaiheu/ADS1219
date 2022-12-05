@@ -6,6 +6,8 @@ ADS1219::ADS1219(uint8_t i2c_addr, uint8_t drdy_pin, TwoWire* wire)
     , _drdy_pin(drdy_pin)
     , _wire(wire)
     , _timeout_ms(100UL)
+    , _aref_n(0.f)
+    , _aref_p(2048.f)
 {
 }
 
@@ -101,14 +103,29 @@ uint8_t ADS1219::getVREF( uint8_t* type )
 }
 
 
-uint8_t ADS1219::setVREF( uint8_t type )
+uint8_t ADS1219::setVREF( uint8_t type, float aref_n, float aref_p )
 {
-    uint8_t value;
+    uint8_t value, err_code;
     if ( type == ADS1219_VREF_INTERNAL ) value = 0;
     else if ( type == ADS1219_VREF_EXTERNAL ) value = 1;
     else return ADS1219_INVALID_VREF;
 
-    return _modify_register(value, ADS1219_CONFIG_MASK_VREF);
+    err_code = _modify_register(value, ADS1219_CONFIG_MASK_VREF);
+    if ( err_code == ADS1219_OK ) 
+    {
+        if ( type == ADS1219_VREF_EXTERNAL ) 
+        {
+            // extern reference, set given values !
+            _aref_n = aref_n;
+            _aref_p = aref_p;
+        } else {
+            // reset to 0 -> 2408 mV
+            _aref_n = 0.;
+            _aref_p = 2048.;
+        }
+    }
+
+    return err_code;
 }
 
 
@@ -212,6 +229,17 @@ int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code )
  {
     return _readout(ADS1219_MUX_SHORTED, err_code );
  }
+
+
+float ADS1219::milliVolts(int32_t adc_count, uint8_t gain, uint8_t* err_code)
+{
+    if ( gain == ADS1219_GAIN_ONE )
+        return adc_count * (_aref_p-_aref_n) / 8388608.0;
+    else if ( gain == ADS1219_GAIN_FOUR )
+        return adc_count * (_aref_p-_aref_n) / 4. / 8388608.0;
+    else return -__FLT_MAX__;
+}
+
 
 
 int32_t ADS1219::_readout( uint8_t mux, uint8_t* err_code )

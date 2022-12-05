@@ -177,10 +177,12 @@ public:
      * Set the voltage type : reference, internal or external
      * 
      * @param type the voltage reference setting : internal (ADS1219_VREF_INTERNAL) or external (ADS1219_VREF_EXTERNAL)
+     * @param arefn in case of external reference, set the negative reference mV (default 0 mV for internal)
+     * @param arefp in case of external reference, set the positive reference mV (default 2048 mV for internal)
      * 
      * @return error code
      */
-    uint8_t setVREF( uint8_t type );
+    uint8_t setVREF( uint8_t type, float aref_n = 0.f, float aref_p = 2048.f );
 
 
     /**
@@ -277,6 +279,18 @@ public:
 
 
     /**
+     * @brief Convert to millivolt
+     * 
+     * @param adc_count : The raw ADC counts
+     * @param gain : The gain setting : ADS1219_GAIN_ONE or ADS1219_GAIN_FOUR
+     * @param err_code  : the error code
+     * 
+     * @return the adc_count value converted t millivolts, depending on the gain & INTERNAL or EXTERNAL reference 
+     */
+    float milliVolts(int32_t adc_count, uint8_t gain, uint8_t* err_code);
+
+
+    /**
      * @brief Send a single byte command, low level routine to build the above more advances
      * 
      * @param cmd The command byte
@@ -308,4 +322,7 @@ private:
     unsigned long _timeout_ms; //! timeout in ms to wait for the ADC conversion result
 
     size_t   _maxBufferSize;
+
+    float    _aref_n;     //! analog negative reference in mV
+    float    _aref_p;     //! analog positive reference in mV
 };
