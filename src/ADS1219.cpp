@@ -363,4 +363,3 @@ int32_t ADS1219::_read_value( uint8_t* err_code )
          ( static_cast<int32_t>(_buffer[1]) << 16) | 
          ( static_cast<int32_t>(_buffer[2]) << 8) ) >> 8;
 }
-}
