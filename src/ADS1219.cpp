@@ -229,17 +229,17 @@ int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code, uint16_t o
     return _readout(mux, err_code ) - offset; // subtract offset, is 0 in case we don't want
 }
 
- int32_t ADS1219::readShorted(uint8_t* err_code, uint16_t samples )
- {
+int32_t ADS1219::readShorted(uint8_t* err_code, uint16_t samples )
+{
     int32_t offset = 0;
 
     // read offset and caluclate cumulative average over offset_cycles samples
     for ( uint16_t i = 0; i < samples; i++ ) {
         offset = ( _readout(ADS1219_MUX_SHORTED, err_code ) + i * offset ) / ( i + 1 );
     }
-    
+
     return offset;
- }
+}
 
 
 float ADS1219::milliVolts(int32_t adc_count, uint8_t gain, uint8_t* err_code)
