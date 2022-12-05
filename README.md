@@ -23,6 +23,8 @@ test folder exist :
 - `test_ads1219_readout`: performs various tests with the readout, single shot and continuous mode
 - `test_ads1219_powerdown`: tests the powerdown behaviour 
 
+See https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityAssertionsReference.md for list of assertions
+
 
 ## Inspired by
 
