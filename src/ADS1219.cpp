@@ -356,10 +356,11 @@ int32_t ADS1219::_read_value( uint8_t* err_code )
     if ( *err_code ) return 0x80000000;
 
     // now decode the bytes
-    uint32_t value = (_buffer[0] << 16) + (_buffer[1] << 8 ) + _buffer[2];
-
-    // make sure the highest 8 bits in the 32 bit integer are cleaned
-    // since the data is returned in binary two's complement format, it' safe to return a uint8_t to int8_t 
-    // thereby correctly treating negative values.. right?!
-    return (value << 8 ) >> 8;
+    // start from the high end byte & shift to lower, that way C++ takes care of the 
+    // sign while bitshifting ! 
+    return (
+         ( static_cast<int32_t>(_buffer[0]) << 24) | 
+         ( static_cast<int32_t>(_buffer[1]) << 16) | 
+         ( static_cast<int32_t>(_buffer[2]) << 8) ) >> 8;
+}
 }
