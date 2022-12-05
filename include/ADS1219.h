@@ -59,6 +59,8 @@
 #define ADS1219_INVALID_CM         8     // invalid conversion mode
 #define ADS1219_TIMEOUT            9     // timeout during conversion
 #define ADS1219_INVALID_MUX       10     // invalid mux config pattern given
+#define ADS1219_ADC_OVERFLOW      11     // ADS1219 returns 0x7FFFFF -- overflow
+#define ADS1219_ADC_UNDERFLOW     12     // ADS1219 returns 0x800000 -- underflow
 
 /**
  * @brief Class to communicate with and ADS1219 chip via I2C 

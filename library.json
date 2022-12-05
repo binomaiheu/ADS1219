@@ -1,6 +1,6 @@
 {
     "name": "ADS1219",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "description": "Texas Instruments ADS1219 I2C library",
     "keywords": "ADS1219, ADC",
     "headers": [ "ADS1219.h" ],

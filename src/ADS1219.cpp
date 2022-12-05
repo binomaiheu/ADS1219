@@ -395,10 +395,17 @@ int32_t ADS1219::_read_value( uint8_t* err_code )
     if ( *err_code ) return 0x80000000;
 
     // now decode the bytes
+
     // start from the high end byte & shift to lower, that way C++ takes care of the 
     // sign while bitshifting ! 
-    return (
+    int32_t value = (
          ( static_cast<int32_t>(_buffer[0]) << 24) | 
          ( static_cast<int32_t>(_buffer[1]) << 16) | 
          ( static_cast<int32_t>(_buffer[2]) << 8) ) >> 8;
+
+    // test for over/underflow !!
+    if ( value >= ( (static_cast<int32_t>(0x7FFFFF) << 8 ) >> 8 ) ) *err_code = ADS1219_ADC_OVERFLOW;
+    if ( value <= ( (static_cast<int32_t>(0x800000) << 8 ) >> 8 ) ) *err_code = ADS1219_ADC_UNDERFLOW;
+
+    return value;
 }
