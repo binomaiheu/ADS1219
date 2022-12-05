@@ -234,7 +234,7 @@ int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code, uint16_t o
     int32_t offset = 0;
 
     // read offset and caluclate cumulative average over offset_cycles samples
-    for ( uint16_t i = 0; i < offset_samples; i++ ) {
+    for ( uint16_t i = 0; i < samples; i++ ) {
         offset = ( _readout(ADS1219_MUX_SHORTED, err_code ) + i * offset ) / ( i + 1 );
     }
     
