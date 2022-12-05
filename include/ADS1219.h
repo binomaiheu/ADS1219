@@ -261,21 +261,24 @@ public:
     /**
      * @brief Reads a single ended result from channel
      * 
+     * @param channel the channel number to read 0-3
      * @param err_code returns an error code, 0 if all was well
+     * @param offset_cycles the number of offset cycles to assess the internal bias (default 0)
      * 
      * @return the value
      */
-    int32_t readSingleEnded(uint8_t channel, uint8_t* err_code );
+    int32_t readSingleEnded(uint8_t channel, uint8_t* err_code, uint16_t offset_samples = 0 );
 
 
     /**
      * @brief Read shorted value
      * 
      * @param err_code returns an error code, 0 if all was well
+     * @param samples read and average over this many samples, default 1
      * 
      * @return the value
      */
-    int32_t readShorted(uint8_t* err_code );
+    int32_t readShorted(uint8_t* err_code, uint16_t samples = 1 );
 
 
     /**

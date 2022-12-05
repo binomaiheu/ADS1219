@@ -199,9 +199,13 @@ bool ADS1219::conversionReady( uint8_t* err_code )
 
 
 
-int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code )
+int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code, uint16_t offset_samples )
 {
     uint8_t mux;
+    int32_t offset = 0;
+
+    if ( offset_samples > 0 )
+        offset = readShorted(err_code, offset_samples);
 
     switch(channel)
     {
@@ -222,12 +226,19 @@ int32_t ADS1219::readSingleEnded( uint8_t channel, uint8_t* err_code )
             return 0x80000000;
     }
 
-    return _readout(mux, err_code );
+    return _readout(mux, err_code ) - offset; // subtract offset, is 0 in case we don't want
 }
 
- int32_t ADS1219::readShorted(uint8_t* err_code )
+ int32_t ADS1219::readShorted(uint8_t* err_code, uint16_t samples )
  {
-    return _readout(ADS1219_MUX_SHORTED, err_code );
+    int32_t offset = 0;
+
+    // read offset and caluclate cumulative average over offset_cycles samples
+    for ( uint16_t i = 0; i < offset_samples; i++ ) {
+        offset = ( _readout(ADS1219_MUX_SHORTED, err_code ) + i * offset ) / ( i + 1 );
+    }
+    
+    return offset;
  }
 
 
